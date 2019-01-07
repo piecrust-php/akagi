@@ -1,0 +1,34 @@
+{
+    "name": "piecrust-php/akagi",
+    "type": "library",
+    "description": "ReactPHP Webserver for Piecrust PHP",
+    "keywords": ["ReactPHP", "server"],
+    "homepage": "http://github.com/piecrust-php/akagi",
+    "license": "Apache-2.0",
+    "authors": [
+        {
+            "name": "Mike Würfel",
+            "email": "news@young-workers.de",
+            "homepage": "https://github.com/giftnuss"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.0",
+        "psr/log": "~1.1.0",
+        "react/http": "v0.8.*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^6.4 || ^5.7 || ^4.8.35",
+        "apix/log": "~1.2.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Akagi\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "React\\Tests\\Http\\": "vendor/react/http/tests/"
+        }
+    }
+}
