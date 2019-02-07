@@ -15,7 +15,9 @@
     "require": {
         "php": ">=5.4.0",
         "psr/log": "~1.1.0",
-        "react/http": "v0.8.*"
+        "react/http": "v0.8.*",
+        "league/flysystem": "~1.0.50",
+        "league/flysystem-memory": "~1.0.0"
     },
     "require-dev": {
         "phpunit/phpunit": "^6.4 || ^5.7 || ^4.8.35",
