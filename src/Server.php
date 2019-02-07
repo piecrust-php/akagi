@@ -12,7 +12,6 @@ use React\Http\Server as ReactHTTP;
 use React\Socket\Server as Socket;
 use React\Socket\ConnectionInterface as Connection;
 
-
 class Server
 {
     protected $options;
@@ -21,7 +20,7 @@ class Server
 
     protected $requestHandlers;
 
-    protected $vfs;
+    protected $fsservice;
 
     protected $before;
 
@@ -36,7 +35,7 @@ class Server
         $this->options = array_merge($defaults,$options);
         $this->log = $log;
         $this->before = array();
-        $this->vfs = new VirtualFileSystem($this->options['document_root'],$log);
+        $this->fsservice = new FilesystemService($this->options['document_root'],$log);
     }
 
     /**
