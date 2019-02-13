@@ -82,7 +82,12 @@ class VirtualFileSystem
             $path = '/';
         }
         if(isset($this->mounts[$path])) {
-            return $this->mounts[$path];
+            if( $path === '/') {
+                 return $this->mounts[$path] . ":///";
+            }
+            else {
+                return $this->mounts[$path] . "://";
+            }
         }
 
         $trimmed = ltrim($path,'/');
@@ -96,6 +101,16 @@ class VirtualFileSystem
             }
         }
         return $this->mounts['/'] . "://" . $path;
+    }
+
+    public function isDirectory($path)
+    {
+        list($prefix,$dir) = explode('://', $path, 2);
+        if($dir === '/') {
+            return true;
+        }
+        $size = $this->manager->getSize($path);
+        return $size === false;
     }
 }
 

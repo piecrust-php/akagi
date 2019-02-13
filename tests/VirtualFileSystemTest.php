@@ -13,8 +13,6 @@ class VirtualFileSystemTest extends TestCase
 {
      use \phpmock\phpunit\PHPMock;
 
-     protected static $getcwd;
-
     /**
      * @beforeClass
      */
@@ -79,6 +77,8 @@ class VirtualFileSystemTest extends TestCase
         $this->assertEquals('root:///index.htm',$vfs->getDocumentPath('/index.htm'));
 
         $this->assertEquals($vfs->getManager()->read('tmpfs01:///blues.txt'),'BLUE NOTE');
+        $this->assertTrue($vfs->getManager()->has('tmpfs01:///blues.txt'));
+        $this->assertFalse($vfs->getManager()->has('tmpfs01:///reds.txt'));
     }
 
     public function testNoDocumentRoot()
@@ -101,11 +101,43 @@ class VirtualFileSystemTest extends TestCase
         $mount2 = new MemoryAdapter();
         $vfs->addMountPoint($mount2,'/mount/tmp02','tmpfs02');
 
-        $this->assertEquals('root', $vfs->getDocumentPath(''));
-        $this->assertEquals('root', $vfs->getDocumentPath('/'));
+        $this->assertEquals('root:///', $vfs->getDocumentPath(''));
+        $this->assertEquals('root:///', $vfs->getDocumentPath('/'));
         $this->assertEquals('root:///text/hello.txt', $vfs->getDocumentPath('/text/hello.txt'));
         $this->assertEquals('tmpfs01:///index.htm',$vfs->getDocumentPath('/mount/tmp01/index.htm'));
         $this->assertEquals('tmpfs02:///index.htm',$vfs->getDocumentPath('/mount/tmp02/index.htm'));
     }
 
+    public function testIsDirectory()
+    {
+        $vfs = new VirtualFileSystem(new MemoryAdapter());
+        $vfs->getManager()->write('root://sound/blue.txt','BLUE NOTE');
+
+        $path = $vfs->getDocumentPath('');
+        $this->assertEquals('root:///',$path);
+        $this->assertTrue($vfs->isDirectory($path));
+
+        $path = $vfs->getDocumentPath('/sound');
+        $this->assertEquals('root:///sound',$path);
+        $this->assertTrue($vfs->isDirectory($path));
+
+        $path = $vfs->getDocumentPath('/sound/');
+        $this->assertEquals('root:///sound/',$path);
+        $this->assertTrue($vfs->isDirectory($path));
+
+        $path = $vfs->getDocumentPath('sound/blue.txt');
+        $this->assertEquals('root://sound/blue.txt',$path);
+        $this->assertFalse($vfs->isDirectory($path));
+    }
+
+    /**
+     * @expectedException League\Flysystem\FileNotFoundException
+     */
+    public function testFileNotFound()
+    {
+        $vfs = new VirtualFileSystem(new MemoryAdapter());
+        $path = $vfs->getDocumentPath('unknown.txt');
+        $this->assertEquals('root://unknown.txt',$path);
+        $vfs->isDirectory($path);
+    }
 }

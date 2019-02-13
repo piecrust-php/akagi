@@ -10,5 +10,5 @@ test:
 	$(PHP) ./vendor/bin/phpunit tests/
 
 cover:
-	$(PHP) -d zend_extension=xdebug ./vendor/bin/phpunit --coverage-html cover --whitelist src tests/
+	$(PHP) -e -d zend_extension=xdebug ./vendor/bin/phpunit --coverage-html cover --whitelist src tests/
 	$(BROWSER) cover/index.html

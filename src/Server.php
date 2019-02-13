@@ -78,17 +78,36 @@ class Server
                     $action($request);
                 }
 
-                if($this->vfs->isDocumentRequest($request)) {
-                    return $this->vfs->handleDocumentRequest($request);
+                $response = null;
+
+                try {
+                    $responsebuilder = new ResponseBuilder(
+                        $server->requestHandlers,
+                        $this->log
+                    );
+
+                    $responsebuilder->handleRequest($request,$response);
+                    if($response) {
+                        $this->log->debug(var_dump($response));
+                        return $response;
+                    }
+
+                    if($this->fsservice->isDocumentRequest($request)) {
+                        $this->fsservice->handleRequest($request,$response);
+                        if($response) {
+                            return $response;
+                        }
+                    }
+
+                    return new Response(404);
+                }
+                catch(\Exception $e) {
+                    $this->log->error("Error: {$e->getMessage()}");
+                    return new Response(500);
                 }
 
                 $this->log->debug("Handle 2 {$request->getUri()}");
-                $responsebuilder = new ResponseBuilder(
-                    $server->requestHandlers,
-                    $this->log
-                );
 
-                return $responsebuilder->run($request);
         });
 
         $socket = new Socket(8080, $loop);

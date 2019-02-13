@@ -5,7 +5,7 @@ namespace Akagi;
 /**
  * The exception class used during the response action.
  */
-class WebException extends Exception
+class WebException extends \Exception
 {
     /**
      * Creates a new instance of WebException.
