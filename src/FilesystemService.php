@@ -39,7 +39,6 @@ class FilesystemService
     {
         $documentPath = $this->filesystem->getDocumentPath($request->getUri()->getPath());
         $manager = $this->filesystem->getManager();
-$this->log->debug('Serving directory: ' . $documentPath);
         if($request->getMethod() === 'GET') {
             try {
                 if($this->filesystem->isDirectory($documentPath)) {
@@ -62,12 +61,12 @@ $this->log->debug('Serving directory: ' . $documentPath);
     /**
      * Returns a web response that corresponds to serving a given static file.
      */
-    public function serveDocument(Request $request, $documentPath)
+    protected function serveDocument(Request $request, $documentPath)
     {
         $manager = $this->filesystem->getManager();
         // First, check for timestamp if possible.
         $serverTimestamp = $manager->getTimestamp($documentPath);
-        $ifModifiedSince = $request->getHeader('If-Modified-Since');
+        $ifModifiedSince = current($request->getHeader('If-Modified-Since'));
         if ($ifModifiedSince != null) {
             $clientTimestamp = strtotime($ifModifiedSince);
             if ($clientTimestamp > $serverTimestamp) {
@@ -108,7 +107,7 @@ $this->log->debug('Serving directory: ' . $documentPath);
         return new Response(200, $headers, $manager->readStream($documentPath));
     }
 
-    public function serveDirectory(Request $request, $documentPath)
+    protected function serveDirectory(Request $request, $documentPath)
     {
         $indexPath = $this->getIndexDocument($documentPath);
         if ($indexPath !== null) {
@@ -127,7 +126,7 @@ $this->log->debug('Serving directory: ' . $documentPath);
      * Returns a web response that corresponds to serving the contents of a
      * given directory.
      */
-    public function _serveDirectory(Request $request, $documentPath)
+    protected function _serveDirectory(Request $request, $documentPath)
     {
         $manager = $this->filesystem->getManager();
         $headers = array();

@@ -88,7 +88,6 @@ class Server
 
                     $responsebuilder->handleRequest($request,$response);
                     if($response) {
-                        $this->log->debug(var_dump($response));
                         return $response;
                     }
 
